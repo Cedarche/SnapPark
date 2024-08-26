@@ -1,0 +1,21 @@
+.text-bubble:before, .text-bubble:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+}
+
+.text-bubble:before {
+  left: -7px; /* Position the main part of the arrow on the left */
+  width: 20px;
+  background-color: #E9E9EB; /* Match the bubble color */
+  border-bottom-right-radius: 16px 14px; /* Adjust border-radius for left side */
+  height: 25px;
+}
+
+.text-bubble:after {
+  left: -27px; /* Position the "cut out" part of the arrow further left */
+  width: 26px;
+  background-color: rgb(255, 255, 255); /* Match the page background color */
+  border-bottom-right-radius: 10px; /* Adjust border-radius for left side */
+  height: 25px;
+}

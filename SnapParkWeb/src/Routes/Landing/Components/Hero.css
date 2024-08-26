@@ -1,0 +1,5 @@
+.zoomed-in {
+    transform: scale(1.12); /* Adjust the scale value as needed */
+    margin-left: 10;
+    transform-origin: center center; /* Ensures the zoom effect is centered */
+  }

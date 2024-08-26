@@ -1,0 +1,14 @@
+# Allow everything
+User-agent: *
+Disallow:
+
+# Disallow crawling of the following directories
+Disallow: /private/
+Disallow: /admin/
+
+# Disallow a specific crawler from a part of your site
+User-agent: BadBot
+Disallow: /
+
+# Sitemap (optional, if you have a sitemap)
+Sitemap: https://www.snappark.co/sitemap.xml
