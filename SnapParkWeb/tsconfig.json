@@ -8,14 +8,14 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
-    
+
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
     "typeRoots": ["./node_modules/@types", "./types"],
-
+   
     /* Linting */
     "strict": true,
     "noUnusedLocals": false,
@@ -23,11 +23,9 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "typings.d.ts"],
+  "include": ["src", "typings.d.ts", "vitest.setup.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

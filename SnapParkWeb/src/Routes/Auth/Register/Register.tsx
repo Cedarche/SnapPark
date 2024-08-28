@@ -13,7 +13,6 @@ import { Transition } from "@headlessui/react";
 import { Link } from "react-router-dom";
 import { usePostHog } from "posthog-js/react";
 
-
 import "./Register.css";
 
 export default function Register() {
@@ -24,77 +23,95 @@ export default function Register() {
   const navigate = useNavigate();
   const posthog = usePostHog();
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
     setMessageArray([]); // Reset message array at the start
-    posthog?.capture('clicked_register_submit')
+    posthog?.capture("clicked_register_submit");
 
-    const email = event.target.email.value;
-    const password = event.target.password.value;
-    const confirmPassword = event.target.confirm.value;
-    const company = event.target.company.value;
+    // Access form elements directly
+    const form = event.currentTarget;
+    const emailElement = form.elements.namedItem("email") as HTMLInputElement;
+    const passwordElement = form.elements.namedItem(
+      "password",
+    ) as HTMLInputElement;
+    const confirmPasswordElement = form.elements.namedItem(
+      "confirm",
+    ) as HTMLInputElement;
+    const companyElement = form.elements.namedItem(
+      "company",
+    ) as HTMLInputElement;
 
-    if (!validateEmail(email)) {
-      setMessageArray(["Please enter a valid email address."]);
-      setIsLoading(false);
-      setTimeout(() => setMessageArray([]), 5000);
-      return;
-    }
+    if (
+      emailElement &&
+      passwordElement &&
+      confirmPasswordElement &&
+      companyElement
+    ) {
+      const email = emailElement.value;
+      const password = passwordElement.value;
+      const confirmPassword = confirmPasswordElement.value;
+      const company = companyElement.value;
 
-    if (password !== confirmPassword) {
-      setMessageArray(["Passwords do not match"]);
-      setIsLoading(false);
-      setTimeout(() => setMessageArray([]), 5000);
-      return;
-    }
-
-    try {
-      const success = await SignUp(email, password, company);
-      if (success) {
-        console.log("Success!");
-        navigate("/dashboard");
-      } else {
-        // Handle the case where SignUp might return false for any other reason
-        console.log("Error during sign up.");
-        setMessageArray(["An unexpected error occurred. Please try again."]);
-      }
-    } catch (error: any) {
-      // console.log(error);
-      posthog?.capture('register_error')
-
-      let errorCode = "unknown_error";
-      let errorMessage = "An unexpected error occurred. Please try again.";
-
-      if (error && typeof error === "object" && "code" in error) {
-        errorCode = error.code;
-        errorMessage = error.message || errorMessage;
-      } else if ((error = "Error: alreadyExistsError")) {
-        errorCode = "alreadyExistsError";
+      if (!validateEmail(email)) {
+        setMessageArray(["Please enter a valid email address."]);
+        setIsLoading(false);
+        setTimeout(() => setMessageArray([]), 5000);
+        return;
       }
 
-      switch (errorCode) {
-        case "auth/email-already-in-use":
-          setMessageArray([
-            "The email address is already in use by another account.",
-          ]);
-          break;
-        case "auth/weak-password":
-          setMessageArray([
-            "Password should be at least 6 characters and include a special character.",
-          ]);
-          break;
-        case "alreadyExistsError":
-          setMessageArray(["The company name is already in use."]);
-          break;
-        // Handle more error codes as needed
-        default:
-          setMessageArray([errorMessage]);
+      if (password !== confirmPassword) {
+        setMessageArray(["Passwords do not match"]);
+        setIsLoading(false);
+        setTimeout(() => setMessageArray([]), 5000);
+        return;
       }
-      // console.error("Signup failed:", errorCode, errorMessage);
-    } finally {
-      setIsLoading(false);
-      setTimeout(() => setMessageArray([]), 5000);
+
+      try {
+        const success = await SignUp(email, password, company);
+        if (success) {
+          console.log("Success!");
+          navigate("/dashboard");
+        } else {
+          console.log("Error during sign up.");
+          setMessageArray(["An unexpected error occurred. Please try again."]);
+        }
+      } catch (error: any) {
+        posthog?.capture("register_error");
+
+        let errorCode = "unknown_error";
+        let errorMessage = "An unexpected error occurred. Please try again.";
+
+        if (error && typeof error === "object" && "code" in error) {
+          errorCode = error.code;
+          errorMessage = error.message || errorMessage;
+        } else if (error.message === "Error: alreadyExistsError") {
+          errorCode = "alreadyExistsError";
+        }
+
+        switch (errorCode) {
+          case "auth/email-already-in-use":
+            setMessageArray([
+              "The email address is already in use by another account.",
+            ]);
+            break;
+          case "auth/weak-password":
+            setMessageArray([
+              "Password should be at least 6 characters and include a special character.",
+            ]);
+            break;
+          case "alreadyExistsError":
+            setMessageArray(["The company name is already in use."]);
+            break;
+          default:
+            setMessageArray([errorMessage]);
+        }
+      } finally {
+        setIsLoading(false);
+        setTimeout(() => setMessageArray([]), 5000);
+      }
+    } else {
+      console.error("Form elements not found.");
     }
   };
 
@@ -136,9 +153,12 @@ export default function Register() {
 
         <div className="bg-white w-max border p-10 rounded-xl shadow-lg container mx-auto px-4 sm:px-6 lg:px-8 ">
           <div className="sm:mx-auto sm:w-full sm:max-w-sm ">
-
             <Link to="/" className="w-full flex items-center justify-center">
-              <img className="h-9 w-auto" src={SnapParkLogo} alt="Snap Park Logo" />
+              <img
+                className="h-9 w-auto"
+                src={SnapParkLogo}
+                alt="Snap Park Logo"
+              />
             </Link>
             <h2 className="mt-5 lg:mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
               Create a new account
@@ -157,7 +177,7 @@ export default function Register() {
                   onMouseLeave={() => setIsTooltipVisible(false)}
                 >
                   <label
-                    htmlFor="email"
+                    htmlFor="company"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Company name
@@ -185,7 +205,8 @@ export default function Register() {
                     id="company"
                     name="company"
                     type="text"
-                    autoComplete=""
+                    data-testid="company"
+                    autoComplete="organization"
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -203,6 +224,7 @@ export default function Register() {
                     id="email"
                     name="email"
                     type="email"
+                    data-testid="email"
                     autoComplete="email"
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -229,6 +251,7 @@ export default function Register() {
                     id="password"
                     name="password"
                     type="password"
+                    data-testid="password"
                     autoComplete="current-password"
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -238,7 +261,7 @@ export default function Register() {
               <div>
                 <div className="flex items-center justify-between">
                   <label
-                    htmlFor="password"
+                    htmlFor="confirm"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Confirm Password
@@ -254,6 +277,7 @@ export default function Register() {
                     id="confirm"
                     name="confirm"
                     type="password"
+                    data-testid="confirm"
                     autoComplete="new-password"
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
