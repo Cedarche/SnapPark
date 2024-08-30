@@ -1,6 +1,4 @@
 import { useState } from "react";
-// import { toggleSpotAvailability, generatePDF2, deleteParkingSpot, updateParkingSpotName } from 'path-to-your-api'; // Import your API functions here
-
 import {
   toggleSpotAvailability,
   deleteParkingSpot,
