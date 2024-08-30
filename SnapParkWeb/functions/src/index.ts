@@ -9,15 +9,13 @@ import {
   toggleEmployeeNotification,
   removeFromNotificationList,
   deleteEmployeeAccount,
-} from "./auth";
+} from "./Authentication/auth";
+import { confirmEmployeeDetails } from "./Authentication/confirmEmployee";
+import { addToNewsletterList, addToAppLaunchList, contact } from "./Authentication/marketing";
 
-import { addToNewsletterList, addToAppLaunchList, contact } from "./marketing";
-
-import { handleAppNotifications } from "./handleAppNotifications";
-
-import { handleNotifications } from "./handleNotifications";
-
-import { resetParkingHourly } from "./resetParkingSpots";
+import { handleAppNotifications } from "./Notifications/handleAppNotifications";
+import { handleNotifications } from "./Notifications/handleNotifications";
+import { resetParkingHourly } from "./Notifications/resetParkingSpots";
 
 import { stripeWebhook, stripeInvoiceWebhook } from "./Stripe/stripeWebhooks";
 
@@ -31,8 +29,6 @@ import {
   createSetupIntent,
   updateDefaultPaymentMethod,
 } from "./Stripe/defaultStripeFunctions";
-
-import { confirmEmployeeDetails } from "./confirmEmployee";
 
 admin.initializeApp();
 setGlobalOptions({ region: "europe-west1" });

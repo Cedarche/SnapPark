@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { Request, Response } from "express";
 import axios from "axios";
 import * as corsLib from "cors";
 
@@ -167,6 +168,9 @@ export const handleNotifications = functions
             const subscriptionItemIds =
               userDoc.data()?.subscriptionDetails?.subscriptionItemIds;
 
+            const stripeCustomerId = userDoc.data()?.stripeCustomerId;
+            const legacyUser = userDoc.data()?.legacyUser;
+
             // Check if the array exists and has at least one element, then access the first element
             const subscriptionItemId =
               subscriptionItemIds?.length > 0 ? subscriptionItemIds[0] : null;
@@ -181,17 +185,28 @@ export const handleNotifications = functions
 
             const messageCount = numbersToNotify.length;
 
-            const usageRecord =
-              await stripe.subscriptionItems.createUsageRecord(
-                subscriptionItemId,
-                {
-                  quantity: messageCount, // Increment by 1 or another value as needed
-                  timestamp: Math.floor(Date.now() / 1000), // Current timestamp in seconds
-                  action: "increment",
-                },
-              );
+            if (legacyUser) {
+              const usageRecord =
+                await stripe.subscriptionItems.createUsageRecord(
+                  subscriptionItemId,
+                  {
+                    quantity: messageCount, // Increment by 1 or another value as needed
+                    timestamp: Math.floor(Date.now() / 1000), // Current timestamp in seconds
+                    action: "increment",
+                  },
+                );
 
-            console.log("Usage record created:", usageRecord);
+              console.log("Legacy usage record created:", usageRecord);
+            } else {
+              const meterEvent = await stripe.billing.meterEvents.create({
+                event_name: "standard_sms",
+                payload: {
+                  value: messageCount,
+                  stripe_customer_id: stripeCustomerId,
+                },
+              });
+              console.log("Meter event created:", meterEvent);
+            }
 
             const firebaseUsageRecord = {
               date: admin.firestore.Timestamp.now(), // Use Firestore Timestamp

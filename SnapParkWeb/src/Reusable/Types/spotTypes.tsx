@@ -5,6 +5,7 @@ export const defaultSettings = {
     customSpotsNotification: false,
     spotsRemainingValue: 3,
     customMessage: "",
+    customSpotsArray: [],
   };
   
   export interface Activity {
@@ -40,7 +41,7 @@ export const defaultSettings = {
       threeSpotsNotification: boolean;
       allNotifications: boolean;
       spotsRemainingValue: number;
-      customSpotsArray: any;
+      customSpotsArray: any[];
       customSpotsNotification: boolean;
       cutomMessage: string;
     };

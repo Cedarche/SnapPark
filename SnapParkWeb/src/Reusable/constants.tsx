@@ -2,6 +2,12 @@ export const appName = 'SNAP PARK'
 export const companyName = 'SNAP PARK'
 export const contactEmailAddress = 'contact@snappark.co'
 export const websiteURL = 'https://snappark.co'
+import {
+  Cog6ToothIcon,
+  ChartBarSquareIcon,
+  CreditCardIcon,
+  QrCodeIcon,
+} from "@heroicons/react/24/outline";
 
 
 export const approvedCurrencyArray = ["AUD", "EUR", "GBP", "USD"];
@@ -48,3 +54,41 @@ export const StandardSMSTier = {
     mostPopular: false,
     metricName: "per Notification",
   };
+
+  export const navigation = [
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: ChartBarSquareIcon,
+      current: true,
+    },
+  
+    {
+      name: "Billing",
+      href: "/dashboard/billing",
+      icon: CreditCardIcon,
+      current: false,
+    },
+    // {
+    //   name: "Notifications",
+    //   href: "/dashboard/notifications",
+    //   icon: BellAlertIcon,
+    //   current: false,
+    // },
+    {
+      name: "Settings",
+      href: "/dashboard/settings",
+      icon: Cog6ToothIcon,
+      current: false,
+    },
+    {
+      name: "QR Code Stickers",
+      href: "/dashboard/stickers",
+      icon: QrCodeIcon,
+      current: false,
+    },
+  ];
+  
+  export const teamsArray = [
+    { id: 1, name: "", href: "#", initial: "", current: true },
+  ];

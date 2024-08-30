@@ -10,10 +10,8 @@ import {
 
 import { toggleEmployeeNotification } from "@/Reusable/Functions/notificationFunctions";
 import Spinner from "@/Reusable/Spinner";
-import QRViewLogo from "../../assets/QRView_Logo_200.png";
-import SnapParkLogo from "../../assets/SnapParkLogo-01.png";
-import { auth, db } from "@/firebase";
-import { doc, getDoc } from "firebase/firestore";
+
+import SnapParkLogo from "../../../assets/SnapParkLogo-01.png";
 import { useNavigate } from "react-router-dom";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/firebase";
@@ -26,8 +24,6 @@ interface Employee {
   mobile: string;
   notifications: boolean;
 }
-
-
 
 export default function SpotNav({
   companyID,
